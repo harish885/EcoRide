@@ -22,7 +22,8 @@ Each teammate should work only on their own branch and then merge changes into `
 - `sql/dml/` -> seed/sample data scripts
 - `sql/indexes/` -> indexes for performance
 - `sql/queries/` -> final query set for demo/report
-- `supabase/` -> optional Supabase-specific scripts/config
+- `supabase/migrations/` -> Supabase CLI migration files
+- `.env.example` -> shared environment variable template
 
 ## One-Time Setup (Each Teammate)
 
@@ -60,6 +61,89 @@ git checkout yon
 git branch --show-current
 ```
 
+## Supabase Setup (EcoRide_Unicatt)
+
+Project details used for this repo:
+
+- Project name: `EcoRide_Unicatt`
+- Project ID / ref: `coteafnoftedqsfeffho`
+- Project URL: `https://coteafnoftedqsfeffho.supabase.co`
+- Security mode for now: basic working DB only (no RLS/policies yet)
+
+### 1. Create local env file
+
+```bash
+cp .env.example .env
+```
+
+Fill these values in `.env`:
+
+- `SUPABASE_ANON_KEY` -> your project's anon key
+- `SUPABASE_ACCESS_TOKEN` -> your Supabase CLI access token
+
+Do not commit `.env`.
+
+### 2. Install Supabase CLI
+
+macOS (Homebrew):
+
+```bash
+brew install supabase/tap/supabase
+```
+
+Verify:
+
+```bash
+supabase --version
+```
+
+### 3. Link this repo to the cloud Supabase project
+
+```bash
+supabase login
+supabase link --project-ref coteafnoftedqsfeffho
+```
+
+### 4. Create and maintain migrations
+
+Create a new migration when schema changes:
+
+```bash
+supabase migration new init_schema
+```
+
+This creates a SQL file under `supabase/migrations/`. Put table SQL in this order:
+
+1. `users.sql`
+2. `stations.sql`
+3. `bikes.sql`
+4. `subscriptions.sql`
+5. `rides.sql`
+6. `maintenances.sql`
+
+Then append index SQL from `sql/indexes/` if needed.
+
+### 5. Push schema changes to Supabase
+
+```bash
+supabase db push
+```
+
+### 6. Pull remote schema changes (if someone else pushed)
+
+```bash
+supabase db pull
+```
+
+## Suggested SQL + Supabase Workflow
+
+1. Update your SQL source files in `sql/ddl/`.
+2. Create a new migration (`supabase migration new <name>`).
+3. Copy/finalize SQL in the migration file.
+4. Run `supabase db push`.
+5. Test in Supabase SQL editor.
+6. Commit both your SQL source files (`sql/...`) and migration files (`supabase/migrations/...`).
+
 ## Daily Workflow (Pull -> Work -> Commit -> Push)
 
 Run this flow every time before and after work.
@@ -94,6 +178,12 @@ git commit -m "Add users and stations DDL"
 
 ```bash
 git push origin <your-branch>
+```
+
+Supabase sync in daily flow:
+
+```bash
+supabase db pull
 ```
 
 ## Merge into `main` (Example)
@@ -149,8 +239,6 @@ When creating schema, run files in this order based on likely dependencies:
 5. `rides.sql`
 6. `maintenances.sql`
 
-Adjust order if your final foreign keys require a different sequence.
-
 ## Current Status
 
 - Team branches created and published:
@@ -159,3 +247,4 @@ Adjust order if your final foreign keys require a different sequence.
   - `origin/yon`
 - ER diagram is available in `docs/ER_DIAGRAM_ECORIDE.png`
 - SQL files are present and ready to be implemented
+- Supabase migration folder initialized at `supabase/migrations/`
