@@ -138,20 +138,6 @@ git commit -m "Resolve merge conflict in rides.sql"
 git push origin <current-branch>
 ```
 
-## Suggested Work Split (Simple)
-
-Use this to avoid overlap.
-
-- Harish (`harish`): `users.sql`, `subscriptions.sql`
-- Virginia (`virginia`): `stations.sql`, `bikes.sql`
-- Yon (`yon`): `rides.sql`, `maintenances.sql`
-
-After DDL is stable:
-
-- Add sample records in `sql/dml/`
-- Add required indexes in `sql/indexes/`
-- Add presentation queries in `sql/queries/`
-
 ## SQL Execution Order (Recommended)
 
 When creating schema, run files in this order based on likely dependencies:
