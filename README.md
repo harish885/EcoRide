@@ -143,9 +143,9 @@ git push origin <current-branch>
 When creating schema, run files in this order based on likely dependencies:
 
 1. `users.sql`
-2. `subscriptions.sql`
-3. `stations.sql`
-4. `bikes.sql`
+2. `stations.sql`
+3. `bikes.sql`
+4. `subscriptions.sql`
 5. `rides.sql`
 6. `maintenances.sql`
 
