@@ -80,6 +80,7 @@ Fill these values in `.env`:
 
 - `SUPABASE_ANON_KEY` -> your project's anon key
 - `SUPABASE_ACCESS_TOKEN` -> your Supabase CLI access token
+- `SUPABASE_DB_PASSWORD` -> your project database password
 
 Do not commit `.env`.
 
@@ -101,7 +102,7 @@ supabase --version
 
 ```bash
 supabase login
-supabase link --project-ref coteafnoftedqsfeffho
+supabase link --project-ref coteafnoftedqsfeffho --password "$SUPABASE_DB_PASSWORD"
 ```
 
 ### 4. Create and maintain migrations
