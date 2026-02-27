@@ -1,12 +1,11 @@
 # EcoRide (SQL + Supabase Project)
 
-EcoRide is a beginner-friendly university database project.
 This guide explains exactly what to run, in what order.
 
 ## Team Branches
 
 - `main` -> stable branch (final combined work)
-- `harish` -> Harish's branch
+- `harish` -> my branch
 - `virginia` -> Virginia's branch
 - `yon` -> Yon's branch
 
@@ -24,30 +23,24 @@ Rule: everyone works in their own branch, then merges to `main`.
 
 ## Part 1: First-Time Git Setup
 
-Run these once.
-
-1. Clone:
+Run once.
 
 ```bash
 git clone https://github.com/harish885/ecoride.git
 cd ecoride
+git fetch --all
 ```
 
-Example: if you are Harish
+Checkout your branch:
 
 ```bash
+# me
 git checkout harish
-```
 
-Example: if you are Virginia
-
-```bash
+# Virginia
 git checkout virginia
-```
 
-Example: if you are Yon
-
-```bash
+# Yon
 git checkout yon
 ```
 
@@ -57,9 +50,9 @@ Check current branch:
 git branch --show-current
 ```
 
-## Part 2: Supabase Access You Need
+## Part 2: Supabase Model (Very Important)
 
-This project uses one shared Supabase project.
+We use **one shared Supabase project** for the whole team.
 
 Project info:
 
@@ -67,61 +60,92 @@ Project info:
 - Project ref: `coteafnoftedqsfeffho`
 - URL: `https://coteafnoftedqsfeffho.supabase.co`
 
-Each teammate must contact **Harish** to get:
+Virginia and Yon should **not** create a new Supabase project or database.
+They should connect to this same shared project.
 
-- `SUPABASE_DB_PASSWORD` (required for `supabase link` and DB push)
-- confirmation of active project ref/URL (if changed)
+## Part 3: What Each Person Needs for `.env`
 
-Each teammate should create their own Supabase access token from their own account.
+Each teammate creates their own local `.env` file from template.
 
-## Part 3: Supabase Environment Setup
-
-1. Create your local env file:
+macOS/Linux:
 
 ```bash
 cp .env.example .env
 ```
 
-2. Open `.env` and fill values:
+Windows PowerShell:
 
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_ACCESS_TOKEN`
-- `SUPABASE_DB_PASSWORD` (ask Harish)
+```powershell
+Copy-Item .env.example .env
+```
+
+Fill these values:
+
+1. `SUPABASE_ANON_KEY`
+- Shared project key.
+- I will share this with teammates.
+
+2. `SUPABASE_ACCESS_TOKEN`
+- Personal token for each teammate.
+- Each person creates their own token at:
+  [https://supabase.com/dashboard/account/tokens](https://supabase.com/dashboard/account/tokens)
+
+3. `SUPABASE_DB_PASSWORD`
+- Shared project DB password.
+- Teammates should contact me to get this.
 
 Important:
 
 - `.env` is local only
 - never commit `.env`
 
-## Part 4: Install and Connect Supabase CLI
+## Part 4: Install Supabase CLI
 
-Install (macOS):
+### macOS (Homebrew)
 
 ```bash
 brew install supabase/tap/supabase
-```
-
-Check install:
-
-```bash
 supabase --version
 ```
 
-Login to CLI:
+### Windows (Scoop)
+
+```powershell
+scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+scoop install supabase
+supabase --version
+```
+
+If Scoop is not installed, install Scoop first:
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+irm get.scoop.sh | iex
+```
+
+## Part 5: Connect Local Repo to Supabase Project
+
+Login:
 
 ```bash
 supabase login
 ```
 
-Link this repository to EcoRide project:
+Link repo to shared project:
+
+macOS/Linux:
 
 ```bash
 supabase link --project-ref coteafnoftedqsfeffho --password "$SUPABASE_DB_PASSWORD"
 ```
 
-## Part 5: Daily Work Flow (Beginner Safe)
+Windows PowerShell:
 
-Run in this sequence every work session.
+```powershell
+supabase link --project-ref coteafnoftedqsfeffho --password "$env:SUPABASE_DB_PASSWORD"
+```
+
+## Part 6: Daily Work Flow
 
 1. Switch to your branch:
 
@@ -135,36 +159,30 @@ Example:
 git checkout harish
 ```
 
-2. Pull latest branch changes:
+2. Pull latest branch updates:
 
 ```bash
 git pull origin <your-branch>
 ```
 
-Example:
-
-```bash
-git pull origin harish
-```
-
-3. Bring latest `main` into your branch:
+3. Merge latest `main` into your branch:
 
 ```bash
 git fetch origin
 git merge origin/main
 ```
 
-4. Make SQL changes in `sql/` folders.
+4. Make SQL changes in `sql/` files.
 
-5. Create migration for your schema change:
+5. Create migration:
 
 ```bash
 supabase migration new add_ecoride_schema
 ```
 
-6. Open new file in `supabase/migrations/` and paste SQL.
+6. Put SQL in the new migration file under `supabase/migrations/`.
 
-Example migration SQL:
+Example:
 
 ```sql
 -- =====================================
@@ -173,13 +191,13 @@ Example migration SQL:
 CREATE SCHEMA IF NOT EXISTS ecoride;
 ```
 
-7. Push migration to Supabase DB:
+7. Push migration to cloud DB:
 
 ```bash
 supabase db push
 ```
 
-8. Commit and push to GitHub:
+8. Commit and push your branch:
 
 ```bash
 git add .
@@ -187,30 +205,42 @@ git commit -m "Create ecoride schema migration"
 git push origin <your-branch>
 ```
 
-Example:
+## Part 7: Merge to Main (GitHub)
 
-```bash
-git push origin harish
-```
+1. Open GitHub.
+2. Create PR from your branch to `main`.
+3. Get approval.
+4. Merge PR.
 
-## Part 6: Merge to Main
-
-After your branch work is ready:
-
-1. Open GitHub -> create PR from your branch to `main`.
-2. Get review/approval.
-3. Merge PR.
-
-After merge, update local main:
+Then update local `main`:
 
 ```bash
 git checkout main
 git pull origin main
 ```
 
-## Part 7: SQL Execution Order
+## Part 8: Sync All Branches With Main
 
-When building schema, use this order:
+```bash
+git checkout main
+git pull origin main
+
+git checkout harish
+git merge main
+git push origin harish
+
+git checkout virginia
+git merge main
+git push origin virginia
+
+git checkout yon
+git merge main
+git push origin yon
+
+git checkout main
+```
+
+## Part 9: SQL Execution Order
 
 1. `users.sql`
 2. `stations.sql`
@@ -219,52 +249,16 @@ When building schema, use this order:
 5. `rides.sql`
 6. `maintenances.sql`
 
-## Part 8: Common Commands Quick Reference
+## Part 10: Common Issues
 
-Current branch:
-
-```bash
-git branch --show-current
-```
-
-See changed files:
-
-```bash
-git status
-```
-
-Get latest from remote:
-
-```bash
-git fetch origin
-```
-
-Pull current branch:
-
-```bash
-git pull origin <your-branch>
-```
-
-Push current branch:
-
-```bash
-git push origin <your-branch>
-```
-
-Create migration:
-
-```bash
-supabase migration new <migration_name>
-```
-
-Apply migrations:
-
-```bash
-supabase db push
-```
-
-## Part 9: If Something Fails
-
-- `supabase link` fails -> check project ref and DB password (ask Harish)
-- `supabase db push` fails -> run `supabase link` again, then retry
-- git conflicts -> resolve file, then `git add`, `git commit`, `git push`
+- `supabase link` fails:
+  - verify project ref is `coteafnoftedqsfeffho`
+  - verify `SUPABASE_DB_PASSWORD` (contact me)
+- `supabase db push` fails:
+  - run `supabase link` again
+  - rerun `supabase db push`
+- git merge conflict:
+  - resolve file
+  - `git add <file>`
+  - `git commit`
+  - `git push`
